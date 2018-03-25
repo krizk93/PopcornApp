@@ -42,7 +42,7 @@ public class DetailActivity extends AppCompatActivity {
         String originalTitle = movie.getOriginalTitle();
         String overview = movie.getOverview();
         String releaseDate = movie.getReleaseDate();
-
+        getSupportActionBar().setTitle(originalTitle);
         loadWithPicasso(posterPath, getApplicationContext(), mimageView);
         mAverageVote.setText(String.valueOf(voteAverage) + "/10");
         mTitle.setText(originalTitle);

@@ -3,18 +3,16 @@
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardBackgroundColor="@color/colorPrimary"
-    android:layout_height="340dp"
+    android:layout_height="320dp"
     xmlns:tools="http://schemas.android.com/tools">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
 
     <ImageView
         android:id="@+id/iv_poster"
-        android:layout_width="wrap_content"
-        android:layout_height="300dp"
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
         android:contentDescription="@string/poster_image"/>
 
     <TextView
@@ -26,9 +24,9 @@
         android:textColor="@color/colorTextAndIcons"
         android:textStyle="bold"
         tools:text="Beauty and The Beast"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:layout_gravity="bottom"/>
 
-</LinearLayout>
 
 
 </android.support.v7.widget.CardView>
