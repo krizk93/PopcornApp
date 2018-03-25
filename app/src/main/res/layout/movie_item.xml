@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardBackgroundColor="@color/colorPrimary"
+    android:layout_height="340dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/iv_poster"
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
+        android:contentDescription="@string/poster_image"/>
+
+    <TextView
+        android:id="@+id/tv_poster_title"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:textSize="16sp"
+        android:fontFamily="sans-serif-condensed"
+        android:textColor="@color/colorTextAndIcons"
+        android:textStyle="bold"
+        tools:text="Beauty and The Beast"
+        android:gravity="center"/>
+
+</LinearLayout>
+
+
+</android.support.v7.widget.CardView>

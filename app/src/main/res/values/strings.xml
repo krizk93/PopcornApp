@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">PopcornApp</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="loading_data" translatable="true">Loading Data</string>
+    <string name= "button_refresh" translatable="true">Refresh</string>
+    <string name="rating_label" translatable="true">Rating</string>
+    <string name="release_date" translatable="true">Release Date</string>
+    <string name="no_internet" translatable="true">No internet connection found </string>
+    <string name="popular_movies" translatable="true">Popular Movies</string>
+    <string name="top_rated_movies" translatable="true">Top Rated Movies</string>
+    <string name="movie_details" translatable="false">Movie Details</string>
+    <string name="poster_image">Poster Image</string>
+</resources>
