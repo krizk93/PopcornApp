@@ -3,7 +3,7 @@
     android:id="@+id/nav_header"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
+    android:layout_height="170dp"
     android:background="@color/colorPrimary"
     android:clickable="true"
     android:focusable="true"
@@ -13,8 +13,8 @@
     android:padding="16dp">
     
     <ImageView
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
         android:id="@+id/nav_header_imageview"
         android:src="@mipmap/ic_launcher_round"
         android:contentDescription="@string/app_name"/>
@@ -23,8 +23,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/nav_header_textview"
-        android:paddingTop="16dp"
+        android:paddingTop="10dp"
         android:text="@string/app_name"
         style="@style/TextAppearance.AppCompat.Body1"/>
+
+    <ImageView
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/tmdb"
+        android:layout_gravity="end"
+        android:contentDescription="@string/tmdb"/>
 
 </LinearLayout>

@@ -11,4 +11,5 @@
     <string name="top_rated_movies" translatable="true">Top Rated Movies</string>
     <string name="movie_details" translatable="false">Movie Details</string>
     <string name="poster_image">Poster Image</string>
+    <string name="tmdb">Powered by The Movie Database</string>
 </resources>
