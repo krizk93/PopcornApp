@@ -9,7 +9,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary">
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
@@ -31,7 +32,8 @@
             app:layout_constraintTop_toBottomOf="@id/progress_bar"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:text="@string/loading_data"/>
+            android:text="@string/loading_data"
+            android:textColor="@color/colorTextAndIcons"/>
 
         <Button
             android:layout_width="wrap_content"
@@ -40,7 +42,9 @@
             app:layout_constraintTop_toBottomOf="@id/tv_loading"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
+            android:background="@color/colorPrimaryDark"
             android:text="@string/button_refresh"
+            android:textColor="@color/colorTextAndIcons"
             android:visibility="invisible"/>
 
     </android.support.constraint.ConstraintLayout>

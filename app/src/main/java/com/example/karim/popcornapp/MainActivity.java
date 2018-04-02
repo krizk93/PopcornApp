@@ -2,6 +2,7 @@ package com.example.karim.popcornapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
@@ -36,7 +37,6 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements MovieAdapter.PosterItemClickListener,
         NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String API_KEY = "";
     public static String category = "popular";
 
     private Context mContext;
@@ -61,13 +61,18 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setTitle(getString(R.string.popular_movies));
 
         mRecyclerView = findViewById(R.id.recycler_view);
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(mContext, 2);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 2));
+        } else{
+            mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 3));
+        }
 
         mProgressBar.setVisibility(View.VISIBLE);
         mLoadingTextView.setVisibility(View.VISIBLE);
@@ -78,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
     }
 
     private void loadData() {
-        if (API_KEY.isEmpty()){
+        if (BuildConfig.API_KEY.isEmpty()){
             Toast.makeText(getApplicationContext(),"NO API KEY FOUND",Toast.LENGTH_LONG).show();
             mProgressBar.setVisibility(View.INVISIBLE);
             mLoadingTextView.setVisibility(View.INVISIBLE);
@@ -96,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
                 }
             });
         } else {
-            Call<MovieResults> call = apiService.getMovies(category, API_KEY);
+            Call<MovieResults> call = apiService.getMovies(category, BuildConfig.API_KEY);
             call.enqueue(new Callback<MovieResults>() {
                 @Override
                 public void onResponse(Call<MovieResults> call, Response<MovieResults> response) {

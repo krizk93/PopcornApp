@@ -2,7 +2,7 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardBackgroundColor="@color/colorPrimary"
+    app:cardBackgroundColor="@color/colorPrimaryDark"
     android:layout_height="320dp"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -13,7 +13,9 @@
         android:layout_height="280dp"
         android:adjustViewBounds="true"
         android:scaleType="fitXY"
-        android:contentDescription="@string/poster_image"/>
+        android:contentDescription="@string/poster_image"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp" />
 
     <TextView
         android:id="@+id/tv_poster_title"
@@ -22,10 +24,15 @@
         android:textSize="16sp"
         android:fontFamily="sans-serif-condensed"
         android:textColor="@color/colorTextAndIcons"
+        android:background="@color/colorPrimary"
         android:textStyle="bold"
         tools:text="Beauty and The Beast"
         android:gravity="center"
-        android:layout_gravity="bottom"/>
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"/>
 
 
 
