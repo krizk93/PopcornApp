@@ -18,7 +18,7 @@ import java.util.List;
  * Created by Karim on 22-Mar-18.
  */
 
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder> {
+public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
     public static final String BASE_URL = "http://image.tmdb.org/t/p/";
     public static final String size = "w500";
 
@@ -37,13 +37,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.movie_item, parent, false);
-        return new MyViewHolder(view);
+        return new MovieViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(MovieViewHolder holder, int position) {
         String path = mDataset.get(position).getPosterPath();
         loadWithPicasso(path, mContext, holder.mImageView);
         holder.mPosterTitle.setText(mDataset.get(position).getTitle());
@@ -54,12 +54,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
         return mDataset.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView mImageView;
         TextView mPosterTitle;
 
-        public MyViewHolder(View itemView) {
+        public MovieViewHolder(View itemView) {
             super(itemView);
 
             mImageView = itemView.findViewById(R.id.iv_poster);

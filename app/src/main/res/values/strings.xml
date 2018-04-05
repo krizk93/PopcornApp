@@ -7,6 +7,7 @@
     <string name="rating_label" translatable="true">Rating</string>
     <string name="release_date" translatable="true">Release Date</string>
     <string name="trailers_label" translatable="true">Trailers</string>
+    <string name="reviews_label" translatable="true">Reviews</string>
     <string name="no_internet" translatable="true">No internet connection found </string>
     <string name="popular_movies" translatable="true">Popular Movies</string>
     <string name="top_rated_movies" translatable="true">Top Rated Movies</string>
@@ -14,4 +15,5 @@
     <string name="movie_details" translatable="false">Movie Details</string>
     <string name="poster_image">Poster Image</string>
     <string name="tmdb">Powered by The Movie Database</string>
+    <string name="review_label"> Review %1$d out of %2$d </string>
 </resources>
