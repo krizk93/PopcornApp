@@ -1,9 +1,11 @@
 package com.example.karim.popcornapp;
 
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -34,9 +36,8 @@ public class YoutubeActivity extends YouTubeBaseActivity {
         if (extras != null) {
             videoPath = extras.getString("KEY");
         }
-
-        mYoutubePlayerView = findViewById(R.id.youtube_player);
-        mYoutubePlayerView.initialize(BuildConfig.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
+       mYoutubePlayerView = findViewById(R.id.youtube_player);
+       mYoutubePlayerView.initialize(BuildConfig.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
                 Log.d(TAG, "done initializing");
@@ -49,7 +50,7 @@ public class YoutubeActivity extends YouTubeBaseActivity {
 
                         @Override
                         public void onLoaded(String s) {
-
+                            mYoutubePlayerView.setVisibility(View.VISIBLE);
                         }
 
                         @Override
@@ -69,10 +70,10 @@ public class YoutubeActivity extends YouTubeBaseActivity {
 
                         @Override
                         public void onError(YouTubePlayer.ErrorReason errorReason) {
-                            Log.d(TAG, "error playing video " + errorReason);
+                            Log.d(TAG,"error playing video " + errorReason);
+                            finish();
                         }
                     });
-
                     youTubePlayer.loadVideo(videoPath);
                 }
             }
