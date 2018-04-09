@@ -21,27 +21,31 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.VideoVie
 
     private List<Videos> mDataset;
     private Context mContext;
+    private final TrailerItemClickListener mOnClickListener;
 
-    public TrailerAdapter(Context context, List<Videos> dataset){
+    public interface TrailerItemClickListener {
+        void onItemClick(Videos video);
+    }
+
+    public TrailerAdapter(Context context, List<Videos> dataset, TrailerItemClickListener listener) {
         mContext = context;
         mDataset = dataset;
+        mOnClickListener = listener;
     }
 
     @Override
     public VideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.trailer_item,parent,false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.trailer_item, parent, false);
         return new VideoViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(VideoViewHolder holder, int position) {
-       String name = mDataset.get(position).getName();
-       String path = mDataset.get(position).getKey();
-       String videoUrl = "https://img.youtube.com/vi/" + path + "/hqdefault.jpg";
+        String name = mDataset.get(position).getName();
+        String path = mDataset.get(position).getKey();
+        String videoUrl = mContext.getString(R.string.thumbnail_url, path);
         Picasso.with(mContext).load(videoUrl).into(holder.mVideo);
-       //Bitmap bMap = ThumbnailUtils.createVideoThumbnail(videoUrl, MediaStore.Video.Thumbnails.MINI_KIND);
-       //holder.mVideo.setImageBitmap(bMap);
-       holder.mTitle.setText(name);
+        holder.mTitle.setText(name);
     }
 
     @Override
@@ -49,7 +53,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.VideoVie
         return mDataset.size();
     }
 
-    class VideoViewHolder extends RecyclerView.ViewHolder{
+    class VideoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView mVideo;
         TextView mTitle;
@@ -59,8 +63,15 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.VideoVie
 
             mVideo = itemView.findViewById(R.id.trailer_video);
             mTitle = itemView.findViewById(R.id.trailer_title);
+            itemView.setOnClickListener(this);
         }
-}
+
+        @Override
+        public void onClick(View view) {
+            int clickedPosition = getAdapterPosition();
+            mOnClickListener.onItemClick(mDataset.get(clickedPosition));
+        }
+    }
 
 
 }

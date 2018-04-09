@@ -20,14 +20,14 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
     private List<Reviews> mDataset;
     private Context mContext;
 
-    public ReviewsAdapter(Context context, List<Reviews> dataset){
+    public ReviewsAdapter(Context context, List<Reviews> dataset) {
         mContext = context;
         mDataset = dataset;
     }
 
     @Override
     public ReviewsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.review_item,parent,false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.review_item, parent, false);
         return new ReviewsViewHolder(view);
     }
 
@@ -35,7 +35,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
     public void onBindViewHolder(ReviewsViewHolder holder, int position) {
         String author = mDataset.get(position).getAuthor();
         String content = mDataset.get(position).getContent();
-        String text = mContext.getString(R.string.review_label,position+1,mDataset.size());
+        String text = mContext.getString(R.string.review_label, position + 1, mDataset.size());
         holder.mLabel.setText(text);
         holder.mAuthor.setText(author);
         holder.mContent.setText(content);
@@ -46,7 +46,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
         return mDataset.size();
     }
 
-    class ReviewsViewHolder extends RecyclerView.ViewHolder{
+    class ReviewsViewHolder extends RecyclerView.ViewHolder {
 
         TextView mAuthor;
         TextView mContent;

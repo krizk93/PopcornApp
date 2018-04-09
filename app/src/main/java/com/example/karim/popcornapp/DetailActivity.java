@@ -3,6 +3,7 @@ package com.example.karim.popcornapp;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -33,18 +34,20 @@ import static com.example.karim.popcornapp.MovieAdapter.loadWithPicasso;
  * Created by Karim on 17-Mar-18.
  */
 
-public class DetailActivity extends AppCompatActivity {
-    ImageView mImageView;
-    TextView mAverageVote;
-    TextView mTitle;
-    TextView mOverview;
-    TextView mReleaseDate;
-    View mBackgroundView;
+public class DetailActivity extends AppCompatActivity implements TrailerAdapter.TrailerItemClickListener {
+    private ImageView mImageView;
+    private TextView mAverageVote;
+    private TextView mTitle;
+    private TextView mOverview;
+    private TextView mReleaseDate;
+    private View mBackgroundView;
     private Context mContext;
     private RecyclerView mTrailersRecyclerView;
     private RecyclerView.Adapter mTrailersAdapter;
     private RecyclerView mReviewsRecyclerView;
     private RecyclerView.Adapter mReviewsAdapter;
+    private TextView mNoTrailersTV;
+    private TextView mNoReviewsTV;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,6 +61,8 @@ public class DetailActivity extends AppCompatActivity {
         mOverview = findViewById(R.id.tv_overview);
         mReleaseDate = findViewById(R.id.tv_date);
         mBackgroundView = findViewById(R.id.background_view);
+        mNoTrailersTV = findViewById(R.id.no_trailers);
+        mNoReviewsTV = findViewById(R.id.no_reviews);
 
         mTrailersRecyclerView = findViewById(R.id.trailers_recycler_view);
         LinearLayoutManager trailersLayoutManager = new LinearLayoutManager(this);
@@ -68,7 +73,7 @@ public class DetailActivity extends AppCompatActivity {
         LinearLayoutManager reviewsLayoutManager = new LinearLayoutManager(this);
         reviewsLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mReviewsRecyclerView.setLayoutManager(reviewsLayoutManager);
-        
+
         Intent intent = getIntent();
         Movies movie = intent.getParcelableExtra(getString(R.string.movie_details));
 
@@ -88,9 +93,13 @@ public class DetailActivity extends AppCompatActivity {
 
         //loading content
         loadWithPicasso(posterPath, getApplicationContext(), mImageView);
-        Drawable background = mImageView.getDrawable().getConstantState().newDrawable();
-        mBackgroundView.setBackground(background);
-        mBackgroundView.getBackground().mutate().setAlpha(50);
+
+        if (mImageView.getDrawable() != null) {
+            Drawable background = mImageView.getDrawable().getConstantState().newDrawable();
+            mBackgroundView.setBackground(background);
+            mBackgroundView.getBackground().mutate().setAlpha(50);
+        }
+
         mAverageVote.setText(String.valueOf(voteAverage) + "/10");
         mTitle.setText(originalTitle);
         mOverview.setText(overview);
@@ -98,13 +107,16 @@ public class DetailActivity extends AppCompatActivity {
 
 
         Service apiService = Client.getClient().create(Service.class);
-        Call<VideoResults> callVideos = apiService.getVideos(id.toString(),BuildConfig.API_KEY);
+        Call<VideoResults> callVideos = apiService.getVideos(id.toString(), BuildConfig.API_KEY);
         callVideos.enqueue(new Callback<VideoResults>() {
             @Override
             public void onResponse(Call<VideoResults> call, Response<VideoResults> response) {
                 List<Videos> trailers = response.body().getResults();
-                mTrailersAdapter = new TrailerAdapter(mContext,trailers);
-                mTrailersRecyclerView.setAdapter(mTrailersAdapter);
+                if (trailers.size() != 0) {
+                    mNoTrailersTV.setVisibility(View.INVISIBLE);
+                    mTrailersAdapter = new TrailerAdapter(mContext, trailers, DetailActivity.this);
+                    mTrailersRecyclerView.setAdapter(mTrailersAdapter);
+                }
             }
 
             @Override
@@ -113,13 +125,16 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
-        Call<ReviewsResults> callReviews = apiService.getReviews(id.toString(),BuildConfig.API_KEY);
+        Call<ReviewsResults> callReviews = apiService.getReviews(id.toString(), BuildConfig.API_KEY);
         callReviews.enqueue(new Callback<ReviewsResults>() {
             @Override
             public void onResponse(Call<ReviewsResults> call, Response<ReviewsResults> response) {
                 List<Reviews> reviews = response.body().getResults();
-                mReviewsAdapter = new ReviewsAdapter(mContext,reviews);
-                mReviewsRecyclerView.setAdapter(mReviewsAdapter);
+                if (reviews.size() != 0) {
+                    mNoReviewsTV.setVisibility(View.INVISIBLE);
+                    mReviewsAdapter = new ReviewsAdapter(mContext, reviews);
+                    mReviewsRecyclerView.setAdapter(mReviewsAdapter);
+                }
             }
 
             @Override
@@ -128,5 +143,13 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onItemClick(Videos video) {
+        String path = video.getKey();
+        Intent intent = new Intent(DetailActivity.this, YoutubeActivity.class);
+        intent.putExtra("KEY", path);
+        startActivity(intent);
     }
 }

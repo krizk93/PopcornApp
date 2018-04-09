@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="350dp"
     android:layout_height="300dp"
     android:orientation="vertical"
+    android:layout_gravity="center_horizontal"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="5dp"
     >
@@ -20,7 +21,10 @@
             android:textColor="@color/colorTextAndIcons"
             android:textSize="20sp"
             tools:text="Review 1 out of 6"
-            android:padding="10dp"/>
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginBottom="10dp"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -36,7 +40,8 @@
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="20dp">
+            android:paddingBottom="20dp"
+            android:layout_margin="5dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -46,7 +51,7 @@
                 tools:text="this is an awesome review"
                 android:layout_margin="15dp"
                 style="@style/TextAppearance.AppCompat.Body2"
-                android:paddingBottom="20dp"/>
+                android:paddingBottom="20dp" />
 
         </android.support.v4.widget.NestedScrollView>
 

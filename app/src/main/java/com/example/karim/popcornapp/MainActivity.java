@@ -2,6 +2,7 @@ package com.example.karim.popcornapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -37,8 +38,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements MovieAdapter.PosterItemClickListener,
         NavigationView.OnNavigationItemSelectedListener {
 
-    public static String category = "popular";
-
+    SharedPreferences sharedPreferences;
     private Context mContext;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -64,13 +64,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(getString(R.string.popular_movies));
 
         mRecyclerView = findViewById(R.id.recycler_view);
 
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 2));
-        } else{
+        } else {
             mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 3));
         }
 
@@ -83,8 +82,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
     }
 
     private void loadData() {
-        if (BuildConfig.API_KEY.isEmpty()){
-            Toast.makeText(getApplicationContext(),"NO API KEY FOUND",Toast.LENGTH_LONG).show();
+        if (BuildConfig.API_KEY.isEmpty()) {
+            Toast.makeText(getApplicationContext(), "NO API KEY FOUND", Toast.LENGTH_LONG).show();
             mProgressBar.setVisibility(View.INVISIBLE);
             mLoadingTextView.setVisibility(View.INVISIBLE);
             return;
@@ -101,6 +100,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
                 }
             });
         } else {
+            //get category from shared preferences, default is popular
+            sharedPreferences = getSharedPreferences("Movie Categories", Context.MODE_PRIVATE);
+            String category = sharedPreferences.getString("category", "popular");
+            setActionBarTitle(category);
             Call<MovieResults> call = apiService.getMovies(category, BuildConfig.API_KEY);
             call.enqueue(new Callback<MovieResults>() {
                 @Override
@@ -134,6 +137,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
+    public void setActionBarTitle(String criteria) {
+        switch (criteria) {
+            case "popular":
+                getSupportActionBar().setTitle(getString(R.string.popular_movies));
+                break;
+            case "top_rated":
+                getSupportActionBar().setTitle(getString(R.string.top_rated_movies));
+                break;
+        }
+    }
+
 
     @Override
     public void onItemClick(Movies movie) {
@@ -152,15 +166,19 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         switch (item.getItemId()) {
             case R.id.popular:
-                category = "popular";
+                editor.putString("category", "popular");
+                editor.apply();
+                setActionBarTitle("popular");
                 getSupportActionBar().setTitle(getString(R.string.popular_movies));
                 loadData();
                 break;
             case R.id.top_rated:
-                category = "top_rated";
-                getSupportActionBar().setTitle(getString(R.string.top_rated_movies));
+                editor.putString("category", "top_rated");
+                editor.apply();
+                setActionBarTitle("top_rated");
                 loadData();
                 break;
         }

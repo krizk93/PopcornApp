@@ -3,7 +3,7 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="loading_data" translatable="true">Loading Data</string>
-    <string name= "button_refresh" translatable="true">Refresh</string>
+    <string name="button_refresh" translatable="true">Refresh</string>
     <string name="rating_label" translatable="true">Rating</string>
     <string name="release_date" translatable="true">Release Date</string>
     <string name="trailers_label" translatable="true">Trailers</string>
@@ -14,6 +14,16 @@
     <string name="favourite_movies" translatable="true">My Favourites</string>
     <string name="movie_details" translatable="false">Movie Details</string>
     <string name="poster_image">Poster Image</string>
+    <string name="no_trailers">No trailers available</string>
+    <string name="no_reviews">No reviews available</string>
     <string name="tmdb">Powered by The Movie Database</string>
-    <string name="review_label"> Review %1$d out of %2$d </string>
+    <string name="review_label"> Review %1$d of %2$d </string>
+    <string name="thumbnail_url">https://img.youtube.com/vi/%1$s/hqdefault.jpg</string>
+    <string name="video_url">https://www.youtube.com/watch?v=%1$s</string>
+
+    <string name="title_activity_trailer">TrailerActivity</string>
+
+    <string name="title_activity_youtube">YoutubeActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
