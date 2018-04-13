@@ -1,8 +1,8 @@
-package com.example.karim.popcornapp.api;
+package com.karim.popcornapp.api;
 
-import com.example.karim.popcornapp.data.MovieResults;
-import com.example.karim.popcornapp.data.ReviewsResults;
-import com.example.karim.popcornapp.data.VideoResults;
+import com.karim.popcornapp.data.MovieResults;
+import com.karim.popcornapp.data.ReviewsResults;
+import com.karim.popcornapp.data.VideoResults;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

@@ -1,12 +1,13 @@
-package com.example.karim.popcornapp;
+package com.karim.popcornapp;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.TextView;
 
+import com.example.karim.popcornapp.BuildConfig;
+import com.example.karim.popcornapp.R;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -17,7 +18,7 @@ public class YoutubeActivity extends YouTubeBaseActivity {
     private static final String TAG = "YoutubeActivity";
 
     YouTubePlayerView mYoutubePlayerView;
-
+    TextView mTextView;
     private String videoPath;
 
     @Override
@@ -36,6 +37,8 @@ public class YoutubeActivity extends YouTubeBaseActivity {
         if (extras != null) {
             videoPath = extras.getString("KEY");
         }
+
+       mTextView = findViewById(R.id.error_label);
        mYoutubePlayerView = findViewById(R.id.youtube_player);
        mYoutubePlayerView.initialize(BuildConfig.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
             @Override
@@ -51,6 +54,7 @@ public class YoutubeActivity extends YouTubeBaseActivity {
                         @Override
                         public void onLoaded(String s) {
                             mYoutubePlayerView.setVisibility(View.VISIBLE);
+                            mTextView.setVisibility(View.INVISIBLE);
                         }
 
                         @Override
@@ -71,7 +75,9 @@ public class YoutubeActivity extends YouTubeBaseActivity {
                         @Override
                         public void onError(YouTubePlayer.ErrorReason errorReason) {
                             Log.d(TAG,"error playing video " + errorReason);
-                            finish();
+                            mTextView.setText(getString(R.string.video_error));
+                            mTextView.setVisibility(View.VISIBLE);
+
                         }
                     });
                     youTubePlayer.loadVideo(videoPath);

@@ -1,4 +1,4 @@
-package com.example.karim.popcornapp;
+package com.karim.popcornapp;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,10 +24,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.karim.popcornapp.api.Client;
-import com.example.karim.popcornapp.api.Service;
-import com.example.karim.popcornapp.data.MovieResults;
-import com.example.karim.popcornapp.data.Movies;
+import com.example.karim.popcornapp.BuildConfig;
+import com.example.karim.popcornapp.R;
+import com.karim.popcornapp.adapters.MovieAdapter;
+import com.karim.popcornapp.api.Client;
+import com.karim.popcornapp.api.Service;
+import com.karim.popcornapp.data.MovieResults;
+import com.karim.popcornapp.data.Movies;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.example.karim.popcornapp;
+package com.karim.popcornapp;
 
 import org.junit.Test;
 

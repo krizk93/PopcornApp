@@ -1,4 +1,4 @@
-package com.example.karim.popcornapp;
+package com.karim.popcornapp;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

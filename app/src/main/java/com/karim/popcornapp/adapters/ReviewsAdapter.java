@@ -1,4 +1,4 @@
-package com.example.karim.popcornapp;
+package com.karim.popcornapp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,7 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.karim.popcornapp.data.Reviews;
+import com.example.karim.popcornapp.R;
+import com.karim.popcornapp.data.Reviews;
 
 import java.util.List;
 

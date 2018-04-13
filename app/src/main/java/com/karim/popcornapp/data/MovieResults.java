@@ -1,4 +1,4 @@
-package com.example.karim.popcornapp.data;
+package com.karim.popcornapp.data;
 
 import java.util.List;
 

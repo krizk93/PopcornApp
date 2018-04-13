@@ -1,4 +1,4 @@
-package com.example.karim.popcornapp.data;
+package com.karim.popcornapp.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -152,6 +152,7 @@ public class Movies implements Parcelable {
     }
 
     public String getPosterPath() {
+        posterPath = posterPath.replaceAll("/", "");
         return posterPath;
     }
 

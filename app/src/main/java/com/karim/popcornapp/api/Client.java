@@ -1,4 +1,4 @@
-package com.example.karim.popcornapp.api;
+package com.karim.popcornapp.api;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

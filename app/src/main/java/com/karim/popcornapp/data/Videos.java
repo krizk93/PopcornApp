@@ -1,4 +1,4 @@
-package com.example.karim.popcornapp.data;
+package com.karim.popcornapp.data;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

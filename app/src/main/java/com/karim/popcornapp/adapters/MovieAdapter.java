@@ -1,4 +1,4 @@
-package com.example.karim.popcornapp;
+package com.karim.popcornapp.adapters;
 
 import android.content.Context;
 import android.net.Uri;
@@ -9,7 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.karim.popcornapp.data.Movies;
+import com.example.karim.popcornapp.R;
+import com.karim.popcornapp.data.Movies;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -19,8 +20,6 @@ import java.util.List;
  */
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
-    public static final String BASE_URL = "http://image.tmdb.org/t/p/";
-    public static final String size = "w500";
 
     private List<Movies> mDataset;
     private Context mContext;
@@ -45,7 +44,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         String path = mDataset.get(position).getPosterPath();
-        loadWithPicasso(path, mContext, holder.mImageView);
+        Uri uri = getPosterURI(path,mContext);
+        Picasso.with(mContext).load(uri).into(holder.mImageView);
         holder.mPosterTitle.setText(mDataset.get(position).getTitle());
     }
 
@@ -74,13 +74,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         }
     }
 
-    public static void loadWithPicasso(String path, Context context, ImageView imageView) {
-        path = path.replaceAll("/", "");
-        Uri uri = Uri.parse(BASE_URL)
-                .buildUpon()
-                .appendPath(size)
-                .appendPath(path)
-                .build();
-        Picasso.with(context).load(uri).into(imageView);
+    public static Uri getPosterURI(String path, Context context){
+        return Uri.parse(context.getString(R.string.poster_url,path));
     }
 }

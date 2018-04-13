@@ -1,4 +1,4 @@
-package com.example.karim.popcornapp.data;
+package com.karim.popcornapp.data;
 
 /**
  * Created by Karim on 02-Apr-18.
