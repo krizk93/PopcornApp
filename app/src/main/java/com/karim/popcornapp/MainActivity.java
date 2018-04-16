@@ -7,6 +7,8 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -57,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
     private ActionBarDrawerToggle mToggle;
 
     private static final int LOADER_ID = 0;
+    //private static final String LIST_STATE_KEY = "state_key";
+    //private Parcelable mListState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
             actionBar.setDisplayHomeAsUpEnabled(true);
 
         mRecyclerView = findViewById(R.id.recycler_view);
+        //mAdapter = new MovieAdapter(this,MainActivity.this);
+        //mRecyclerView.setAdapter(mAdapter);
 
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 2));
@@ -90,9 +96,35 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //loadData();
+/*        RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
+        if (mListState != null)
+        layoutManager.onRestoreInstanceState(mListState);*/
+    }
+
+/*    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        mListState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        outState.putParcelable(LIST_STATE_KEY, mListState);
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState!= null)
+            mListState = savedInstanceState.getParcelable(LIST_STATE_KEY);
+    }*/
+
     private void loadData() {
         mProgressBar.setVisibility(View.VISIBLE);
         mLoadingTextView.setVisibility(View.VISIBLE);
+        sharedPreferences = getSharedPreferences("Movie Categories", Context.MODE_PRIVATE);
+        String category = sharedPreferences.getString("category", "popular");
         if (BuildConfig.API_KEY.isEmpty()) {
             Toast.makeText(getApplicationContext(), "NO API KEY FOUND", Toast.LENGTH_LONG).show();
             mProgressBar.setVisibility(View.INVISIBLE);
@@ -110,13 +142,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
                     loadData();
                 }
             });
+            mAdapter = new MovieAdapter(this,MainActivity.this);
+            mRecyclerView.setAdapter(mAdapter);
+            mAdapter.swapCursor(null);
         } else {
-            //get category from shared preferences, default is popular
-            sharedPreferences = getSharedPreferences("Movie Categories", Context.MODE_PRIVATE);
-            String category = sharedPreferences.getString("category", "popular");
-            if (category.equals("favorites"))
-                category = "popular";
             setActionBarTitle(category);
+            if (category.equals("favorites")) {
+                loadFromDatabase();
+                return;
+            }
             Call<MovieResults> call = apiService.getMovies(category, BuildConfig.API_KEY);
             call.enqueue(new Callback<MovieResults>() {
                 @Override
@@ -233,24 +267,21 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
         mProgressBar.setVisibility(View.INVISIBLE);
         mLoadingTextView.setVisibility(View.INVISIBLE);
         mRefreshButton.setVisibility(View.INVISIBLE);
+        mAdapter = new MovieAdapter(mContext, MainActivity.this);
+        mRecyclerView.setAdapter(mAdapter);
         getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        String[] projection = {
-                FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID,
-                FavoritesContract.FavoritesEntry.COLUMN_TITLE,
-                FavoritesContract.FavoritesEntry.COLUMN_POSTER_ID
-        };
-        return new CursorLoader(this, FavoritesContract.FavoritesEntry.CONTENT_URI, projection, null, null, FavoritesContract.FavoritesEntry._ID);
+        return new CursorLoader(this, FavoritesContract.FavoritesEntry.CONTENT_URI, null, null, null, FavoritesContract.FavoritesEntry._ID);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        mAdapter = new MovieAdapter(mContext, MainActivity.this);
-        mRecyclerView.setAdapter(mAdapter);
+
+
         mAdapter.swapCursor(cursor);
     }
 

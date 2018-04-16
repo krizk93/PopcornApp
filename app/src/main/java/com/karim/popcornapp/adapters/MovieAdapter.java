@@ -2,6 +2,7 @@ package com.karim.popcornapp.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -57,7 +58,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             Uri uri = getPosterURI(path, mContext);
             Picasso.with(mContext).load(uri).into(holder.mImageView);
             holder.mPosterTitle.setText(mDataset.get(position).getTitle());
-        } else {
+        } else if (mCursor != null){
             if (!mCursor.moveToPosition(position))
                 return;
             String path = mCursor.getString(mCursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_POSTER_ID
@@ -89,6 +90,19 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         notifyDataSetChanged();
     }
 
+    public Movies getDataFromCursor(Cursor cursor){
+        Movies movie = new Movies();
+        movie.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID))));
+        movie.setPosterPath(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_POSTER_ID)));
+        movie.setTitle(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_TITLE)));
+        movie.setOriginalTitle(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_ORIGINAL_TITLE)));
+        movie.setVoteAverage(Double.parseDouble(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_RATING))));
+        movie.setReleaseDate(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_RELEASE_DATE)));
+        movie.setOriginalLanguage(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_LANGUAGE)));
+        movie.setOverview(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_OVERVIEW)));
+        return movie;
+    }
+
     class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView mImageView;
@@ -105,9 +119,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         @Override
         public void onClick(View view) {
             int clickedPosition = getAdapterPosition();
-            if (mDataset != null) {
-                mOnClickListener.onItemClick(mDataset.get(clickedPosition));
+            if (mDataset == null) {
+                Movies movie;
+                mCursor.moveToPosition(clickedPosition);
+                movie = getDataFromCursor(mCursor);
+                mOnClickListener.onItemClick(movie);
+                //String test = "this is a test";
             }
+            else
+                mOnClickListener.onItemClick(mDataset.get(clickedPosition));
+
         }
     }
 }

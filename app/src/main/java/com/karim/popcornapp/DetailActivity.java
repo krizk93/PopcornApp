@@ -173,7 +173,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                     addToFavorites();
                 else removeFromFavorites();
             }
+
         });
+
 
         Service apiService = Client.getClient().create(Service.class);
         Call<VideoResults> callVideos = apiService.getVideos(movieId.toString(), BuildConfig.API_KEY);
@@ -214,6 +216,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
 
     }
 
+
     @Override
     public void onItemClick(Videos video) {
         String path = video.getKey();
@@ -243,6 +246,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         Uri uri = getContentResolver().insert(FavoritesContract.FavoritesEntry.CONTENT_URI, cv);
         if (uri != null) {
             Toast.makeText(getApplicationContext(), "Added to Favorites", Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 
@@ -250,6 +254,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         int removed = getContentResolver().delete(uri, null, null);
         if (removed > 0) {
             Toast.makeText(getApplicationContext(), "Removed from Favorites", Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 
@@ -271,4 +276,5 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     public void onLoaderReset(Loader<Cursor> loader) {
         //not applicable
     }
+
 }
