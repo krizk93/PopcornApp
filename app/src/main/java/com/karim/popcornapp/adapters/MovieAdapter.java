@@ -1,6 +1,7 @@
 package com.karim.popcornapp.adapters;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.karim.popcornapp.R;
 import com.karim.popcornapp.data.Movies;
+import com.karim.popcornapp.persistence.FavoritesContract;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -23,6 +25,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     private List<Movies> mDataset;
     private Context mContext;
+    private Cursor mCursor;
     private final PosterItemClickListener mOnClickListener;
 
     public interface PosterItemClickListener {
@@ -35,6 +38,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         mOnClickListener = listener;
     }
 
+    public MovieAdapter(Context context, PosterItemClickListener listener) {
+        mContext = context;
+        mDataset = null;
+        mOnClickListener = listener;
+    }
+
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.movie_item, parent, false);
@@ -43,15 +52,41 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
-        String path = mDataset.get(position).getPosterPath();
-        Uri uri = getPosterURI(path,mContext);
-        Picasso.with(mContext).load(uri).into(holder.mImageView);
-        holder.mPosterTitle.setText(mDataset.get(position).getTitle());
+        if (mDataset != null) {
+            String path = mDataset.get(position).getPosterPath();
+            Uri uri = getPosterURI(path, mContext);
+            Picasso.with(mContext).load(uri).into(holder.mImageView);
+            holder.mPosterTitle.setText(mDataset.get(position).getTitle());
+        } else {
+            if (!mCursor.moveToPosition(position))
+                return;
+            String path = mCursor.getString(mCursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_POSTER_ID
+            ));
+            String title = mCursor.getString(mCursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_TITLE));
+            Uri uri = getPosterURI(path, mContext);
+            Picasso.with(mContext).load(uri).into(holder.mImageView);
+            holder.mPosterTitle.setText(title);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        if (mDataset != null) {
+            return mDataset.size();
+        } else if (mCursor != null) {
+            return mCursor.getCount();
+        } else return 0;
+    }
+
+    public static Uri getPosterURI(String path, Context context) {
+        return Uri.parse(context.getString(R.string.poster_url, path));
+    }
+
+    public void swapCursor(Cursor newCursor) {
+        if (mCursor != null) mCursor.close();
+        mCursor = newCursor;
+        mDataset = null;
+        notifyDataSetChanged();
     }
 
     class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -59,7 +94,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         ImageView mImageView;
         TextView mPosterTitle;
 
-        public MovieViewHolder(View itemView) {
+        MovieViewHolder(View itemView) {
             super(itemView);
 
             mImageView = itemView.findViewById(R.id.iv_poster);
@@ -70,11 +105,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         @Override
         public void onClick(View view) {
             int clickedPosition = getAdapterPosition();
-            mOnClickListener.onItemClick(mDataset.get(clickedPosition));
+            if (mDataset != null) {
+                mOnClickListener.onItemClick(mDataset.get(clickedPosition));
+            }
         }
-    }
-
-    public static Uri getPosterURI(String path, Context context){
-        return Uri.parse(context.getString(R.string.poster_url,path));
     }
 }

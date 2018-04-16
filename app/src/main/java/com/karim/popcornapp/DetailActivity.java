@@ -1,11 +1,17 @@
 package com.karim.popcornapp;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +19,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.karim.popcornapp.BuildConfig;
 import com.example.karim.popcornapp.R;
@@ -25,6 +33,7 @@ import com.karim.popcornapp.data.Reviews;
 import com.karim.popcornapp.data.ReviewsResults;
 import com.karim.popcornapp.data.VideoResults;
 import com.karim.popcornapp.data.Videos;
+import com.karim.popcornapp.persistence.FavoritesContract;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
@@ -44,21 +53,37 @@ import static com.karim.popcornapp.adapters.MovieAdapter.getPosterURI;
  * Created by Karim on 17-Mar-18.
  */
 
-public class DetailActivity extends AppCompatActivity implements TrailerAdapter.TrailerItemClickListener {
+public class DetailActivity extends AppCompatActivity implements TrailerAdapter.TrailerItemClickListener,
+        LoaderManager.LoaderCallbacks<Cursor> {
+
     private ImageView mImageView;
     private TextView mAverageVote;
     private TextView mTitle;
     private TextView mOverview;
     private TextView mReleaseDate;
     private TextView mLanguage;
+    private ToggleButton mToggle;
     private View mBackgroundView;
     private Context mContext;
     private RecyclerView mTrailersRecyclerView;
-    private RecyclerView.Adapter mTrailersAdapter;
+    private TrailerAdapter mTrailersAdapter;
     private RecyclerView mReviewsRecyclerView;
-    private RecyclerView.Adapter mReviewsAdapter;
+    private ReviewsAdapter mReviewsAdapter;
     private TextView mNoTrailersTV;
     private TextView mNoReviewsTV;
+
+    private Integer movieId;
+    private Double voteAverage;
+    private String posterPath;
+    private String originalTitle;
+    private String englishTitle;
+    private String overview;
+    private String formattedDate;
+    private String originalLanguage;
+
+    private static final int LOADER_ID = 2;
+    private Uri uri;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,6 +100,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         mBackgroundView = findViewById(R.id.background_view);
         mNoTrailersTV = findViewById(R.id.no_trailers);
         mNoReviewsTV = findViewById(R.id.no_reviews);
+        mToggle = findViewById(R.id.btn_fav);
 
         mTrailersRecyclerView = findViewById(R.id.trailers_recycler_view);
         LinearLayoutManager trailersLayoutManager = new LinearLayoutManager(this);
@@ -86,39 +112,39 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         reviewsLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mReviewsRecyclerView.setLayoutManager(reviewsLayoutManager);
 
-
         Intent intent = getIntent();
         Movies movie = intent.getParcelableExtra(getString(R.string.movie_details));
 
         //retrieving data from parcel
-        Integer id = movie.getId();
-        Double voteAverage = movie.getVoteAverage();
-        String posterPath = movie.getPosterPath();
-        String originalTitle = movie.getOriginalTitle();
-        String englishTitle = movie.getTitle();
-        String overview = movie.getOverview();
+        movieId = movie.getId();
+        uri = FavoritesContract.FavoritesEntry.CONTENT_URI.buildUpon().appendPath(movieId.toString()).build();
+        voteAverage = movie.getVoteAverage();
+        posterPath = movie.getPosterPath();
+        originalTitle = movie.getOriginalTitle();
+        englishTitle = movie.getTitle();
+        overview = movie.getOverview();
 
         String releaseDate = movie.getReleaseDate();
-        String formattedDate;
-        try{
-         formattedDate = dateReformat(releaseDate);
-        }catch (ParseException e){
+        try {
+            formattedDate = dateReformat(releaseDate);
+        } catch (ParseException e) {
             formattedDate = releaseDate;
-            Log.e("Date",e.getLocalizedMessage());
+            Log.e("Date", e.getLocalizedMessage());
         }
 
         String lng = movie.getOriginalLanguage();
         Locale loc = new Locale(lng);
-        String originalLanguage = loc.getDisplayLanguage();
+        originalLanguage = loc.getDisplayLanguage();
 
         //actionbar
-        getSupportActionBar().setTitle(englishTitle);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.mipmap.actionbar_icon);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(englishTitle);
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setLogo(R.mipmap.actionbar_icon);
+        actionBar.setDisplayUseLogoEnabled(true);
 
-        //loading content
-        Uri uri = getPosterURI(posterPath,getApplicationContext());
+        //loading poster
+        Uri uri = getPosterURI(posterPath, getApplicationContext());
         Picasso.with(getApplicationContext()).load(uri).into(mImageView, new com.squareup.picasso.Callback() {
             @Override
             public void onSuccess() {
@@ -129,7 +155,6 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
 
             @Override
             public void onError() {
-
             }
         });
 
@@ -139,9 +164,19 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         mReleaseDate.setText(formattedDate);
         mLanguage.setText(originalLanguage);
 
+        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+
+        mToggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mToggle.isChecked())
+                    addToFavorites();
+                else removeFromFavorites();
+            }
+        });
 
         Service apiService = Client.getClient().create(Service.class);
-        Call<VideoResults> callVideos = apiService.getVideos(id.toString(), BuildConfig.API_KEY);
+        Call<VideoResults> callVideos = apiService.getVideos(movieId.toString(), BuildConfig.API_KEY);
         callVideos.enqueue(new Callback<VideoResults>() {
             @Override
             public void onResponse(Call<VideoResults> call, Response<VideoResults> response) {
@@ -159,7 +194,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
             }
         });
 
-        Call<ReviewsResults> callReviews = apiService.getReviews(id.toString(), BuildConfig.API_KEY);
+        Call<ReviewsResults> callReviews = apiService.getReviews(movieId.toString(), BuildConfig.API_KEY);
         callReviews.enqueue(new Callback<ReviewsResults>() {
             @Override
             public void onResponse(Call<ReviewsResults> call, Response<ReviewsResults> response) {
@@ -192,5 +227,48 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
         DateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy");
         Date date = inputFormat.parse(inputDateString);
         return outputFormat.format(date);
+    }
+
+    public void addToFavorites() {
+        ContentValues cv = new ContentValues();
+        cv.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID, movieId);
+        cv.put(FavoritesContract.FavoritesEntry.COLUMN_POSTER_ID, posterPath);
+        cv.put(FavoritesContract.FavoritesEntry.COLUMN_TITLE, englishTitle);
+        cv.put(FavoritesContract.FavoritesEntry.COLUMN_ORIGINAL_TITLE, originalTitle);
+        cv.put(FavoritesContract.FavoritesEntry.COLUMN_RATING, voteAverage);
+        cv.put(FavoritesContract.FavoritesEntry.COLUMN_RELEASE_DATE, formattedDate);
+        cv.put(FavoritesContract.FavoritesEntry.COLUMN_LANGUAGE, originalLanguage);
+        cv.put(FavoritesContract.FavoritesEntry.COLUMN_OVERVIEW, overview);
+
+        Uri uri = getContentResolver().insert(FavoritesContract.FavoritesEntry.CONTENT_URI, cv);
+        if (uri != null) {
+            Toast.makeText(getApplicationContext(), "Added to Favorites", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void removeFromFavorites() {
+        int removed = getContentResolver().delete(uri, null, null);
+        if (removed > 0) {
+            Toast.makeText(getApplicationContext(), "Removed from Favorites", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(this, uri, null, null, null, FavoritesContract.FavoritesEntry._ID);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        //check if there is data
+        if (data != null && data.moveToFirst()) {
+            mToggle.setChecked(true);
+        } else mToggle.setChecked(false);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        //not applicable
     }
 }

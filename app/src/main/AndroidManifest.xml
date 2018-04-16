@@ -24,6 +24,10 @@
             android:name="com.karim.popcornapp.YoutubeActivity"
             android:screenOrientation="landscape">
         </activity>
+        <provider
+            android:authorities="com.karim.popcornapp"
+            android:name="com.karim.popcornapp.persistence.FavoritesContentProvider"
+            android:exported="false" />
     </application>
 
 </manifest>

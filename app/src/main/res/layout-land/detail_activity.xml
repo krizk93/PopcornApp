@@ -119,15 +119,15 @@
             app:layout_constraintTop_toBottomOf="@id/tv_rating"
             tools:text="original title" />
 
-        <android.support.design.widget.CheckableImageButton
-            android:id="@+id/btn_fav"
+        <ToggleButton
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginTop="240dp"
-            android:background="?attr/selectableItemBackground"
-            android:src="@drawable/star"
+            android:id="@+id/btn_fav"
+            style="@style/toggleButton"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="240dp"
+            android:background="@drawable/ic_toggle_bg"/>
 
         <android.support.v4.widget.NestedScrollView
             android:layout_width="0dp"

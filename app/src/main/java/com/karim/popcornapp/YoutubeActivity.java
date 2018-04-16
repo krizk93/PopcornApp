@@ -38,9 +38,9 @@ public class YoutubeActivity extends YouTubeBaseActivity {
             videoPath = extras.getString("KEY");
         }
 
-       mTextView = findViewById(R.id.error_label);
-       mYoutubePlayerView = findViewById(R.id.youtube_player);
-       mYoutubePlayerView.initialize(BuildConfig.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
+        mTextView = findViewById(R.id.error_label);
+        mYoutubePlayerView = findViewById(R.id.youtube_player);
+        mYoutubePlayerView.initialize(BuildConfig.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
                 Log.d(TAG, "done initializing");
@@ -74,7 +74,7 @@ public class YoutubeActivity extends YouTubeBaseActivity {
 
                         @Override
                         public void onError(YouTubePlayer.ErrorReason errorReason) {
-                            Log.d(TAG,"error playing video " + errorReason);
+                            Log.d(TAG, "error playing video " + errorReason);
                             mTextView.setText(getString(R.string.video_error));
                             mTextView.setVisibility(View.VISIBLE);
 

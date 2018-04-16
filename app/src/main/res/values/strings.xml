@@ -12,6 +12,8 @@
     <string name="no_internet" translatable="true">No internet connection found </string>
     <string name="popular_movies" translatable="true">Popular Movies</string>
     <string name="top_rated_movies" translatable="true">Top Rated Movies</string>
+    <string name="now_playing_movies" translatable="true">Now Playing</string>
+    <string name="upcoming_movies" translatable="true">Upcoming</string>
     <string name="favourite_movies" translatable="true">My Favourites</string>
     <string name="movie_details" translatable="false">Movie Details</string>
     <string name="poster_image">Poster Image</string>

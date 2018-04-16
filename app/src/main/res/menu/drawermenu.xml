@@ -4,4 +4,6 @@
     <item android:id="@+id/popular" android:title="@string/popular_movies" android:icon="@drawable/ic_popular"/>
     <item android:id="@+id/top_rated" android:title="@string/top_rated_movies" android:icon="@drawable/ic_top_rated"/>
     <item android:id="@+id/favourites" android:title="@string/favourite_movies" android:icon="@drawable/ic_favourites"/>
+    <item android:id="@+id/now_playing" android:title="@string/now_playing_movies" android:icon="@drawable/ic_now_playing"/>
+    <item android:id="@+id/upcoming" android:title="@string/upcoming_movies" android:icon="@drawable/ic_upcoming"/>
 </menu>
