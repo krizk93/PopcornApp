@@ -25,7 +25,7 @@
     <string name="thumbnail_url">https://img.youtube.com/vi/%1$s/hqdefault.jpg</string>
     <string name="video_url">https://www.youtube.com/watch?v=%1$s</string>
     <string name="video_error">Error playing video</string>
-
+    <string name="rating">%1$s/10</string>
     <string name="title_activity_trailer">TrailerActivity</string>
 
     <string name="title_activity_youtube">YoutubeActivity</string>

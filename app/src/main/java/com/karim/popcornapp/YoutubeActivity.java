@@ -26,7 +26,7 @@ public class YoutubeActivity extends YouTubeBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_youtube);
-        activityYoutubeBinding = DataBindingUtil.setContentView(this,R.layout.activity_youtube);
+        activityYoutubeBinding = DataBindingUtil.setContentView(this, R.layout.activity_youtube);
 
         View mDecorView = getWindow().getDecorView();
         mDecorView.setSystemUiVisibility(

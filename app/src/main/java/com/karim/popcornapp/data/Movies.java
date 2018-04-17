@@ -57,7 +57,8 @@ public class Movies implements Parcelable {
     @Expose
     private String releaseDate;
 
-    public Movies(){}
+    public Movies() {
+    }
 
     protected Movies(Parcel in) {
         if (in.readByte() == 0) {

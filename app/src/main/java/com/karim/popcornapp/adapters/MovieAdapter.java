@@ -58,7 +58,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             Uri uri = getPosterURI(path, mContext);
             Picasso.with(mContext).load(uri).into(holder.mImageView);
             holder.mPosterTitle.setText(mDataset.get(position).getTitle());
-        } else if (mCursor != null){
+        } else if (mCursor != null) {
             if (!mCursor.moveToPosition(position))
                 return;
             String path = mCursor.getString(mCursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_POSTER_ID
@@ -90,7 +90,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         notifyDataSetChanged();
     }
 
-    public Movies getDataFromCursor(Cursor cursor){
+    public Movies getDataFromCursor(Cursor cursor) {
         Movies movie = new Movies();
         movie.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID))));
         movie.setPosterPath(cursor.getString(cursor.getColumnIndex(FavoritesContract.FavoritesEntry.COLUMN_POSTER_ID)));
@@ -124,9 +124,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                 mCursor.moveToPosition(clickedPosition);
                 movie = getDataFromCursor(mCursor);
                 mOnClickListener.onItemClick(movie);
-                //String test = "this is a test";
-            }
-            else
+            } else
                 mOnClickListener.onItemClick(mDataset.get(clickedPosition));
 
         }

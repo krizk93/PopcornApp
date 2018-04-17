@@ -80,7 +80,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail_activity);
-        detailActivityBinding = DataBindingUtil.setContentView(this,R.layout.detail_activity);
+        detailActivityBinding = DataBindingUtil.setContentView(this, R.layout.detail_activity);
 
         mContext = getApplicationContext();
 
@@ -138,7 +138,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
             }
         });
 
-        detailActivityBinding.tvRating.setText(String.valueOf(voteAverage) + "/10");
+        detailActivityBinding.tvRating.setText(getString(R.string.rating, String.valueOf(voteAverage)));
         detailActivityBinding.tvTitle.setText(originalTitle);
         detailActivityBinding.tvOverview.setText(overview);
         detailActivityBinding.tvDate.setText(formattedDate);
@@ -152,6 +152,7 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
                 if (detailActivityBinding.btnFav.isChecked())
                     addToFavorites();
                 else removeFromFavorites();
+                finish();
             }
 
         });
@@ -225,16 +226,14 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
 
         Uri uri = getContentResolver().insert(FavoritesContract.FavoritesEntry.CONTENT_URI, cv);
         if (uri != null) {
-            Toast.makeText(getApplicationContext(), "Added to Favorites", Toast.LENGTH_LONG).show();
-            finish();
+            Toast.makeText(getApplicationContext(), "Added to Favorites", Toast.LENGTH_SHORT).show();
         }
     }
 
     public void removeFromFavorites() {
         int removed = getContentResolver().delete(uri, null, null);
         if (removed > 0) {
-            Toast.makeText(getApplicationContext(), "Removed from Favorites", Toast.LENGTH_LONG).show();
-            finish();
+            Toast.makeText(getApplicationContext(), "Removed from Favorites", Toast.LENGTH_SHORT).show();
         }
     }
 

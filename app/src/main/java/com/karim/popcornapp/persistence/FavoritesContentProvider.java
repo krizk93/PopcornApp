@@ -121,7 +121,7 @@ public class FavoritesContentProvider extends ContentProvider {
                 returnId = db.delete(FavoritesContract.FavoritesEntry.TABLE_NAME, FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID + "=?", mSelectionArgs);
                 break;
             default:
-                throw new UnsupportedOperationException("Unknow uri:" + uri);
+                throw new UnsupportedOperationException("Unknown uri:" + uri);
         }
         if (returnId > 0) {
             getContext().getContentResolver().notifyChange(uri, null);

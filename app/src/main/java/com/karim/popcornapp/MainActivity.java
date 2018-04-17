@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
     ActivityMainBinding mainBinding;
     private static final String LIST_STATE_KEY = "state_key";
     private Parcelable mListState;
-    private static Bundle mBundleRecyclerViewState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +96,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
     protected void onResume() {
         super.onResume();
         loadData();
-        if (mListState != null)
-            mLayoutManager.onRestoreInstanceState(mListState);
     }
 
     @Override
@@ -163,6 +160,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
                     mainBinding.refreshButton.setVisibility(View.INVISIBLE);
                     mAdapter = new MovieAdapter(mContext, movies, MainActivity.this);
                     mainBinding.recyclerView.setAdapter(mAdapter);
+                    if (mListState != null)
+                        mLayoutManager.onRestoreInstanceState(mListState);
 
                 }
 
