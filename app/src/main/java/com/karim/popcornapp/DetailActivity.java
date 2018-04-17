@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import android.widget.ToggleButton;
 
 import com.example.karim.popcornapp.BuildConfig;
 import com.example.karim.popcornapp.R;
+import com.example.karim.popcornapp.databinding.DetailActivityBinding;
 import com.karim.popcornapp.adapters.ReviewsAdapter;
 import com.karim.popcornapp.adapters.TrailerAdapter;
 import com.karim.popcornapp.api.Client;
@@ -56,21 +58,10 @@ import static com.karim.popcornapp.adapters.MovieAdapter.getPosterURI;
 public class DetailActivity extends AppCompatActivity implements TrailerAdapter.TrailerItemClickListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    private ImageView mImageView;
-    private TextView mAverageVote;
-    private TextView mTitle;
-    private TextView mOverview;
-    private TextView mReleaseDate;
-    private TextView mLanguage;
-    private ToggleButton mToggle;
-    private View mBackgroundView;
+    DetailActivityBinding detailActivityBinding;
     private Context mContext;
-    private RecyclerView mTrailersRecyclerView;
     private TrailerAdapter mTrailersAdapter;
-    private RecyclerView mReviewsRecyclerView;
     private ReviewsAdapter mReviewsAdapter;
-    private TextView mNoTrailersTV;
-    private TextView mNoReviewsTV;
 
     private Integer movieId;
     private Double voteAverage;
@@ -89,28 +80,17 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail_activity);
+        detailActivityBinding = DataBindingUtil.setContentView(this,R.layout.detail_activity);
 
         mContext = getApplicationContext();
-        mImageView = findViewById(R.id.image_poster);
-        mAverageVote = findViewById(R.id.tv_rating);
-        mLanguage = findViewById(R.id.tv_language);
-        mTitle = findViewById(R.id.tv_title);
-        mOverview = findViewById(R.id.tv_overview);
-        mReleaseDate = findViewById(R.id.tv_date);
-        mBackgroundView = findViewById(R.id.background_view);
-        mNoTrailersTV = findViewById(R.id.no_trailers);
-        mNoReviewsTV = findViewById(R.id.no_reviews);
-        mToggle = findViewById(R.id.btn_fav);
 
-        mTrailersRecyclerView = findViewById(R.id.trailers_recycler_view);
         LinearLayoutManager trailersLayoutManager = new LinearLayoutManager(this);
         trailersLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        mTrailersRecyclerView.setLayoutManager(trailersLayoutManager);
+        detailActivityBinding.trailersRecyclerView.setLayoutManager(trailersLayoutManager);
 
-        mReviewsRecyclerView = findViewById(R.id.reviews_recycler_view);
         LinearLayoutManager reviewsLayoutManager = new LinearLayoutManager(this);
         reviewsLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        mReviewsRecyclerView.setLayoutManager(reviewsLayoutManager);
+        detailActivityBinding.reviewsRecyclerView.setLayoutManager(reviewsLayoutManager);
 
         Intent intent = getIntent();
         Movies movie = intent.getParcelableExtra(getString(R.string.movie_details));
@@ -145,12 +125,12 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
 
         //loading poster
         Uri uri = getPosterURI(posterPath, getApplicationContext());
-        Picasso.with(getApplicationContext()).load(uri).into(mImageView, new com.squareup.picasso.Callback() {
+        Picasso.with(getApplicationContext()).load(uri).into(detailActivityBinding.imagePoster, new com.squareup.picasso.Callback() {
             @Override
             public void onSuccess() {
-                Drawable background = mImageView.getDrawable().getConstantState().newDrawable();
-                mBackgroundView.setBackground(background);
-                mBackgroundView.getBackground().mutate().setAlpha(50);
+                Drawable background = detailActivityBinding.imagePoster.getDrawable().getConstantState().newDrawable();
+                detailActivityBinding.backgroundView.setBackground(background);
+                detailActivityBinding.backgroundView.getBackground().mutate().setAlpha(50);
             }
 
             @Override
@@ -158,18 +138,18 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
             }
         });
 
-        mAverageVote.setText(String.valueOf(voteAverage) + "/10");
-        mTitle.setText(originalTitle);
-        mOverview.setText(overview);
-        mReleaseDate.setText(formattedDate);
-        mLanguage.setText(originalLanguage);
+        detailActivityBinding.tvRating.setText(String.valueOf(voteAverage) + "/10");
+        detailActivityBinding.tvTitle.setText(originalTitle);
+        detailActivityBinding.tvOverview.setText(overview);
+        detailActivityBinding.tvDate.setText(formattedDate);
+        detailActivityBinding.tvLanguage.setText(originalLanguage);
 
         getSupportLoaderManager().initLoader(LOADER_ID, null, this);
 
-        mToggle.setOnClickListener(new View.OnClickListener() {
+        detailActivityBinding.btnFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mToggle.isChecked())
+                if (detailActivityBinding.btnFav.isChecked())
                     addToFavorites();
                 else removeFromFavorites();
             }
@@ -184,9 +164,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
             public void onResponse(Call<VideoResults> call, Response<VideoResults> response) {
                 List<Videos> trailers = response.body().getResults();
                 if (trailers.size() != 0) {
-                    mNoTrailersTV.setVisibility(View.INVISIBLE);
+                    detailActivityBinding.noTrailers.setVisibility(View.INVISIBLE);
                     mTrailersAdapter = new TrailerAdapter(mContext, trailers, DetailActivity.this);
-                    mTrailersRecyclerView.setAdapter(mTrailersAdapter);
+                    detailActivityBinding.trailersRecyclerView.setAdapter(mTrailersAdapter);
                 }
             }
 
@@ -202,9 +182,9 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
             public void onResponse(Call<ReviewsResults> call, Response<ReviewsResults> response) {
                 List<Reviews> reviews = response.body().getResults();
                 if (reviews.size() != 0) {
-                    mNoReviewsTV.setVisibility(View.INVISIBLE);
+                    detailActivityBinding.noReviews.setVisibility(View.INVISIBLE);
                     mReviewsAdapter = new ReviewsAdapter(mContext, reviews);
-                    mReviewsRecyclerView.setAdapter(mReviewsAdapter);
+                    detailActivityBinding.reviewsRecyclerView.setAdapter(mReviewsAdapter);
                 }
             }
 
@@ -268,8 +248,8 @@ public class DetailActivity extends AppCompatActivity implements TrailerAdapter.
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         //check if there is data
         if (data != null && data.moveToFirst()) {
-            mToggle.setChecked(true);
-        } else mToggle.setChecked(false);
+            detailActivityBinding.btnFav.setChecked(true);
+        } else detailActivityBinding.btnFav.setChecked(false);
     }
 
     @Override

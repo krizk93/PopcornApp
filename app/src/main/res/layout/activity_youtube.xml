@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools">
+
+<android.support.constraint.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    tools:context="com.example.karim.popcornapp.YoutubeActivity">
+    tools:context="com.karim.popcornapp.YoutubeActivity">
 
     <com.google.android.youtube.player.YouTubePlayerView
         android:layout_width="match_parent"
@@ -28,3 +30,4 @@
         tools:text="test"/>
 
 </android.support.constraint.ConstraintLayout>
+</layout>

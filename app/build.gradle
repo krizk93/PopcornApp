@@ -21,6 +21,12 @@ android {
         it.buildConfigField 'String', 'API_KEY', MyMoviesDBApiKey
         it.buildConfigField 'String', 'YOUTUBE_API_KEY', YoutubeApiKey
     }
+
+    dataBinding {
+        enabled = true
+    }
+
+
 }
 
 repositories {
@@ -28,6 +34,7 @@ repositories {
     mavenCentral()
 
 }
+
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -46,5 +53,6 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    //youtube
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
 }

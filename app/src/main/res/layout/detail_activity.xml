@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:padding="5dp"
     android:id="@+id/background_view">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:descendantFocusability="blocksDescendants">
 
 
             <ImageView
@@ -110,15 +114,6 @@
                 android:textColor="@color/colorPrimary"
                 android:layout_margin="5dp"/>
 
-            <!--<android.support.design.widget.CheckableImageButton
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:id="@+id/btn_fav"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="240dp"
-                android:background="?attr/selectableItemBackground"
-                android:src="@drawable/star"/>-->
 
             <ToggleButton
                 android:layout_width="60dp"
@@ -232,3 +227,4 @@
 
 
 </ScrollView>
+</layout>

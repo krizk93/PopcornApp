@@ -1,6 +1,7 @@
 package com.karim.popcornapp;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.karim.popcornapp.BuildConfig;
 import com.example.karim.popcornapp.R;
+import com.example.karim.popcornapp.databinding.ActivityYoutubeBinding;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -17,14 +19,14 @@ public class YoutubeActivity extends YouTubeBaseActivity {
 
     private static final String TAG = "YoutubeActivity";
 
-    YouTubePlayerView mYoutubePlayerView;
-    TextView mTextView;
+    ActivityYoutubeBinding activityYoutubeBinding;
     private String videoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_youtube);
+        activityYoutubeBinding = DataBindingUtil.setContentView(this,R.layout.activity_youtube);
 
         View mDecorView = getWindow().getDecorView();
         mDecorView.setSystemUiVisibility(
@@ -38,9 +40,7 @@ public class YoutubeActivity extends YouTubeBaseActivity {
             videoPath = extras.getString("KEY");
         }
 
-        mTextView = findViewById(R.id.error_label);
-        mYoutubePlayerView = findViewById(R.id.youtube_player);
-        mYoutubePlayerView.initialize(BuildConfig.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
+        activityYoutubeBinding.youtubePlayer.initialize(BuildConfig.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
                 Log.d(TAG, "done initializing");
@@ -53,8 +53,8 @@ public class YoutubeActivity extends YouTubeBaseActivity {
 
                         @Override
                         public void onLoaded(String s) {
-                            mYoutubePlayerView.setVisibility(View.VISIBLE);
-                            mTextView.setVisibility(View.INVISIBLE);
+                            activityYoutubeBinding.youtubePlayer.setVisibility(View.VISIBLE);
+                            activityYoutubeBinding.errorLabel.setVisibility(View.INVISIBLE);
                         }
 
                         @Override
@@ -75,8 +75,8 @@ public class YoutubeActivity extends YouTubeBaseActivity {
                         @Override
                         public void onError(YouTubePlayer.ErrorReason errorReason) {
                             Log.d(TAG, "error playing video " + errorReason);
-                            mTextView.setText(getString(R.string.video_error));
-                            mTextView.setVisibility(View.VISIBLE);
+                            activityYoutubeBinding.errorLabel.setText(getString(R.string.video_error));
+                            activityYoutubeBinding.errorLabel.setVisibility(View.VISIBLE);
 
                         }
                     });

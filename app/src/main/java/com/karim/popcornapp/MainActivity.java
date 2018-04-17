@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.databinding.DataBindingUtil;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Parcelable;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 
 import com.example.karim.popcornapp.BuildConfig;
 import com.example.karim.popcornapp.R;
+import com.example.karim.popcornapp.databinding.ActivityMainBinding;
 import com.karim.popcornapp.adapters.MovieAdapter;
 import com.karim.popcornapp.api.Client;
 import com.karim.popcornapp.api.Service;
@@ -48,32 +50,28 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements MovieAdapter.PosterItemClickListener,
         NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
+
     SharedPreferences sharedPreferences;
     private Context mContext;
-    private RecyclerView mRecyclerView;
     private MovieAdapter mAdapter;
-    private ProgressBar mProgressBar;
-    private TextView mLoadingTextView;
-    private Button mRefreshButton;
-    private DrawerLayout mDrawerLayout;
+    private RecyclerView.LayoutManager mLayoutManager;
     private ActionBarDrawerToggle mToggle;
-
     private static final int LOADER_ID = 0;
-    //private static final String LIST_STATE_KEY = "state_key";
-    //private Parcelable mListState;
+    ActivityMainBinding mainBinding;
+    private static final String LIST_STATE_KEY = "state_key";
+    private Parcelable mListState;
+    private static Bundle mBundleRecyclerViewState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = getApplicationContext();
-        mProgressBar = findViewById(R.id.progress_bar);
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        mLoadingTextView = findViewById(R.id.tv_loading);
-        mRefreshButton = findViewById(R.id.refresh_button);
+        mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
-        mDrawerLayout.addDrawerListener(mToggle);
+
+        mToggle = new ActionBarDrawerToggle(this, mainBinding.drawerLayout, R.string.open, R.string.close);
+        mainBinding.drawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
 
 
@@ -81,70 +79,74 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
         if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
 
-        mRecyclerView = findViewById(R.id.recycler_view);
-        //mAdapter = new MovieAdapter(this,MainActivity.this);
-        //mRecyclerView.setAdapter(mAdapter);
 
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 2));
+            mLayoutManager = new GridLayoutManager(mContext, 2);
         } else {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(mContext, 3));
+            mLayoutManager = new GridLayoutManager(mContext, 3);
         }
+        mainBinding.recyclerView.setLayoutManager(mLayoutManager);
         setNavigationViewListener();
-        loadData();
+        //loadData();
 
 
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
-        //loadData();
-/*        RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
+        loadData();
         if (mListState != null)
-        layoutManager.onRestoreInstanceState(mListState);*/
+            mLayoutManager.onRestoreInstanceState(mListState);
     }
 
-/*    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
-        mListState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mListState = mLayoutManager.onSaveInstanceState();
         outState.putParcelable(LIST_STATE_KEY, mListState);
-
     }
+
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState!= null)
+        if (savedInstanceState != null)
             mListState = savedInstanceState.getParcelable(LIST_STATE_KEY);
-    }*/
+
+    }
 
     private void loadData() {
-        mProgressBar.setVisibility(View.VISIBLE);
-        mLoadingTextView.setVisibility(View.VISIBLE);
+        mainBinding.progressBar.setVisibility(View.VISIBLE);
+        mainBinding.tvLoading.setVisibility(View.VISIBLE);
+
         sharedPreferences = getSharedPreferences("Movie Categories", Context.MODE_PRIVATE);
         String category = sharedPreferences.getString("category", "popular");
+
+        mAdapter = new MovieAdapter(this, MainActivity.this);
+        mainBinding.recyclerView.setAdapter(mAdapter);
+        mAdapter.swapCursor(null);
+
         if (BuildConfig.API_KEY.isEmpty()) {
             Toast.makeText(getApplicationContext(), "NO API KEY FOUND", Toast.LENGTH_LONG).show();
-            mProgressBar.setVisibility(View.INVISIBLE);
-            mLoadingTextView.setVisibility(View.INVISIBLE);
+            mainBinding.progressBar.setVisibility(View.INVISIBLE);
+            mainBinding.tvLoading.setVisibility(View.INVISIBLE);
             return;
         }
         Service apiService = Client.getClient().create(Service.class);
         if (!isOnline()) {
-            mProgressBar.setVisibility(View.INVISIBLE);
-            mLoadingTextView.setText(getString(R.string.no_internet));
-            mRefreshButton.setVisibility(View.VISIBLE);
-            mRefreshButton.setOnClickListener(new View.OnClickListener() {
+            mainBinding.progressBar.setVisibility(View.INVISIBLE);
+            mainBinding.tvLoading.setText(getString(R.string.no_internet));
+            mainBinding.refreshButton.setVisibility(View.VISIBLE);
+
+            mainBinding.refreshButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     loadData();
                 }
             });
-            mAdapter = new MovieAdapter(this,MainActivity.this);
-            mRecyclerView.setAdapter(mAdapter);
-            mAdapter.swapCursor(null);
+
         } else {
             setActionBarTitle(category);
             if (category.equals("favorites")) {
@@ -156,11 +158,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
                 @Override
                 public void onResponse(Call<MovieResults> call, Response<MovieResults> response) {
                     List<Movies> movies = response.body().getResults();
-                    mProgressBar.setVisibility(View.INVISIBLE);
-                    mLoadingTextView.setVisibility(View.INVISIBLE);
-                    mRefreshButton.setVisibility(View.INVISIBLE);
+                    mainBinding.progressBar.setVisibility(View.INVISIBLE);
+                    mainBinding.tvLoading.setVisibility(View.INVISIBLE);
+                    mainBinding.refreshButton.setVisibility(View.INVISIBLE);
                     mAdapter = new MovieAdapter(mContext, movies, MainActivity.this);
-                    mRecyclerView.setAdapter(mAdapter);
+                    mainBinding.recyclerView.setAdapter(mAdapter);
 
                 }
 
@@ -173,8 +175,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
     }
 
     private void setNavigationViewListener() {
-        NavigationView navigationView = findViewById(R.id.navigation_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mainBinding.navigationView.setNavigationItemSelectedListener(this);
     }
 
     public boolean isOnline() {
@@ -259,16 +260,16 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Post
                 loadData();
                 break;
         }
-        mDrawerLayout.closeDrawer(GravityCompat.START);
+        mainBinding.drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
     public void loadFromDatabase() {
-        mProgressBar.setVisibility(View.INVISIBLE);
-        mLoadingTextView.setVisibility(View.INVISIBLE);
-        mRefreshButton.setVisibility(View.INVISIBLE);
+        mainBinding.progressBar.setVisibility(View.INVISIBLE);
+        mainBinding.tvLoading.setVisibility(View.INVISIBLE);
+        mainBinding.refreshButton.setVisibility(View.INVISIBLE);
         mAdapter = new MovieAdapter(mContext, MainActivity.this);
-        mRecyclerView.setAdapter(mAdapter);
+        mainBinding.recyclerView.setAdapter(mAdapter);
         getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
